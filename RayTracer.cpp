@@ -16,11 +16,13 @@
 #include <GL/freeglut.h>
 #include "Plane.h"
 #include "TextureBMP.h"
+#include "Cylinder.h"
+#include "Cone.h"
 using namespace std;
 
 const float EDIST = 40.0;
 const int NUMDIV = 500;
-const int MAX_STEPS = 5;
+const int MAX_STEPS = 10;
 const float XMIN = -10.0;
 const float XMAX = 10.0;
 const float YMIN = -10.0;
@@ -51,11 +53,16 @@ glm::vec3 trace(Ray ray, int step)
 		int ix = (ray.hit.x) / stripeWidth;
  		int k = iz % 2; //2 colors
 		int l = ix % 2;
- 		if (k == 0 && l == 0) color = glm::vec3(0, 1, 0);
-		if (k == -1 && l == -1) color = glm::vec3(0, 1, 0);
-		if (l == 1 && k == 0) color = glm::vec3(1, 0, 0);
-		//if (l == -1 && k == 0) color = glm::vec3(1, 0, 0);
-		if (l == 0 && k == -1) color = glm::vec3(1, 0, 0);
+
+		if (((k == 0 && l == 0) || (k == -1 && l == -1)) && (ray.hit.x <= 0)) {
+			color = glm::vec3(0.5, 1, 0.37);
+		} else if(((k == -1 && l == 0) || (k == 0 && l == 1)) && (ray.hit.x > 0)) {
+			color = glm::vec3(0.5, 1, 0.37);
+		} else {
+			color = glm::vec3(0.7, 0, 0);
+		}
+
+
  		obj->setColor(color);
 
 	}
@@ -70,7 +77,7 @@ glm::vec3 trace(Ray ray, int step)
 
 	if ((shadowRay.index > -1) ) {
 		if (shadowRay.index == 2 || shadowRay.index == 4) {
-			color = 0.5f * obj->getColor();
+			color = 0.7f * obj->getColor();
 		} else {
 			color = 0.2f * obj->getColor(); //0.2 = ambient scale factor
 		}
@@ -224,38 +231,48 @@ void initialize()
 	texture = TextureBMP("Earth.bmp");
 
 //Reflective Sphere
-	Sphere *sphere1 = new Sphere(glm::vec3(-5.0, 0.0, -90.0), 10.0);
+	Sphere *sphere1 = new Sphere(glm::vec3(-5.0, 2.5, -90.0), 10.0);
 	sphere1->setColor(glm::vec3(0, 0, 1));   //Set colour to blue
 	sphere1->setReflectivity(true, 0.8);
-	sceneObjects.push_back(sphere1);		 //Add sphere to scene objects
+	sceneObjects.push_back(sphere1);		 //0
 	//Textured Sphere
 	Sphere *sphere2 = new Sphere(glm::vec3(10.0, 10.0, -60.0), 3.0);
 	sphere2->setColor(glm::vec3(0, 1, 0.5));
-	sceneObjects.push_back(sphere2);
+	sceneObjects.push_back(sphere2); //1
 	//Refractive Sphere
 	Sphere *sphere3 = new Sphere(glm::vec3(10.0, -5.0, -65.0), 5.0);
 	sphere3->setColor(glm::vec3(0.5, 0.95, 1));
 	sphere3->setRefractivity(true, 1.02, 1.02);
-	sceneObjects.push_back(sphere3);
+	sceneObjects.push_back(sphere3); //2
 
 	Plane *floorPlane = new Plane (glm::vec3(-20., -15, -40), //Point A
  								glm::vec3(20., -15, -40), //Point B
  								glm::vec3(20., -15, -200), //Point C
  								glm::vec3(-20., -15, -200)); //Point D
 	floorPlane->setColor(glm::vec3(0.8, 0.8, 0));
-	sceneObjects.push_back(floorPlane);
+	sceneObjects.push_back(floorPlane); //3
 	// Transparent Sphere
 	Sphere *sphere4 = new Sphere(glm::vec3(0.0, -12.5, -60.0), 2.5);
 	sphere4->setColor(glm::vec3(0.9, 1, 0.3));
-	sphere4->setTransparency(true, 0.2);
-	sceneObjects.push_back(sphere4);
+	sphere4->setTransparency(true, 0.8);
+	sceneObjects.push_back(sphere4); //4
 
 	Plane *rearPlane = new Plane (glm::vec3(-20., -15, -120), //Point A
  								glm::vec3(20., -15, -120), //Point B
  								glm::vec3(20., 15, -120), //Point C
  								glm::vec3(-20., 15, -120)); //Point D
 	rearPlane->setColor(glm::vec3(0.8, 0.8, 0));
-	sceneObjects.push_back(rearPlane);
+	sceneObjects.push_back(rearPlane); // 5
+	//Hollow Cylinder under large sphere
+	Cylinder *cylinder1 = new Cylinder(glm::vec3(-5.0, -15, -90), 5, 5);
+	cylinder1->setColor(glm::vec3(0.8, 0.4, 0));
+	sceneObjects.push_back(cylinder1); //6
+
+	//Cone
+
+	Cone *cone1 = new Cone(glm::vec3(0.0, -15., -75), 2, 5);
+	cone1->setColor(glm::vec3(0, 0.4, 1));
+	sceneObjects.push_back(cone1); //7
 
 
 	makeBox(7.5, -15, -70, 5, 5, 5, glm::vec3(1., 0., 0.));
