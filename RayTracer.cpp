@@ -122,9 +122,9 @@ glm::vec3 trace(Ray ray, int step)
 
 	if (ray.index == 1 && step < MAX_STEPS) {
 		glm::vec3 center(10, 10, -60.0);
-		glm::vec3 d=glm::normalize(ray.hit-center);
-		float u=(0.5-atan2(d.z,d.x)+M_PI)/(2*M_PI);
-		float v=0.5+asin(d.y)/M_PI;
+		glm::vec3 d = glm::normalize(ray.hit-center);
+		float u = (0.5-atan2(d.z,d.x)+M_PI)/(2*M_PI);
+		float v = 0.5+asin(d.y)/M_PI;
 		color = texture.getColorAt(u, v);
    }
 

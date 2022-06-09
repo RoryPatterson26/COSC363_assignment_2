@@ -7,11 +7,11 @@
 float Cone::intersect(glm::vec3 p0, glm::vec3 dir) {
     glm::vec3 d = p0 - center;
     float yd = height - p0.y + center.y;
-    float tan = powf((radius / height), 2);
+    float tanPiece = powf((radius / height), 2);
 
-    float a = powf(dir.x, 2) + powf(dir.z, 2) - (tan*powf(dir.y, 2));
-    float b = 2*(d.x * dir.x + d.z * dir.z + tan * yd * dir.y);
-    float c = powf(d.x, 2) + powf(d.z, 2) - (tan * powf(yd, 2));
+    float a = powf(dir.x, 2) + powf(dir.z, 2) - (tanPiece * powf(dir.y, 2));
+    float b = 2*(d.x * dir.x + d.z * dir.z + tanPiece * yd * dir.y);
+    float c = powf(d.x, 2) + powf(d.z, 2) - (tanPiece * powf(yd, 2));
     float delta = powf(b, 2) - 4*(a * c);
 
 	if(delta < 0.001) return -1.0;
